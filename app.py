@@ -16,7 +16,7 @@ create_database()
 st.title("🏃 Athena")
 st.write("Willkommen Nico 👋")
 st.write("## Dein persönlicher Laufcoach")
-st.info("Version 0.3.0: Läufe manuell erfassen")
+st.info("Version 0.4.0: Läufe manuell erfassen")
 
 st.divider()
 
@@ -34,6 +34,10 @@ if uploaded_file is not None:
     st.image(uploaded_file, use_container_width=True)
 
     data = extract_run_data(uploaded_file)
+
+    st.subheader("Erkannter Text")
+
+    st.code(data)
 
     st.success("Screenshot erfolgreich geladen ✅")
 
