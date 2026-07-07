@@ -1,0 +1,21 @@
+# Roadmap
+
+## 0.3 Coach
+
+- letzte 3 Läufe
+- Trends
+- erste Empfehlungen
+
+## 0.4 Mobile
+
+- Deployment
+- iPhone
+
+## 0.5 OCR
+
+- Screenshot Upload
+- automatische Werte
+
+## 1.0
+
+Persönlicher Laufcoach
