@@ -9,3 +9,13 @@ Ein persönlicher Laufcoach, der meine Läufe analysiert und langfristig Zusamme
 Aktueller Stand:
 
 Version 0.2 – Memory
+
+Version 0.3 - Coach
+
+## Projekt starten
+
+Virtuelle Umgebung aktivieren:
+
+```powershell
+.\.venv\Scripts\Activate
+streamlit run app.py

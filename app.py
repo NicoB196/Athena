@@ -1,7 +1,7 @@
 from datetime import date
 import streamlit as st
 
-from ocr import extract_run_data
+from ai import analyze_fitbit_screenshot
 
 from database import create_database, save_run, get_last_three_runs
 from analysis import average_runs, compare_current_run, generate_summary
@@ -33,19 +33,24 @@ uploaded_file = st.file_uploader(
 if uploaded_file is not None:
     st.image(uploaded_file, use_container_width=True)
 
-    data = extract_run_data(uploaded_file)
+    if st.button("🤖 Screenshot auslesen"):
+        with st.spinner("Athena liest deinen Screenshot..."):
+            try:
+                data = analyze_fitbit_screenshot(uploaded_file)
 
-    st.success("Screenshot erfolgreich gelesen ✅")
+                st.session_state.ocr_kilometer = data["kilometer"] or 0.0
+                st.session_state.ocr_dauer = data["dauer"] or 0.0
+                st.session_state.ocr_pace = data["pace"] or ""
+                st.session_state.ocr_puls = int(data["puls"] or 0)
+                st.session_state.ocr_hoehenmeter = int(data["hoehenmeter"] or 0)
+                st.session_state.ocr_kalorien = int(data["kalorien"] or 0)
+                st.session_state.show_form = True
 
-    st.write("### Erkannte Werte")
-    st.write(f"📏 Strecke: {data['kilometer']} km")
-    st.write(f"⏱ Dauer: {data['dauer']} Minuten")
-    st.write(f"⚡ Pace: {data['pace']} min/km")
-    st.write(f"❤️ Puls: {data['puls']} bpm")
-    st.write(f"🔥 Kalorien: {data['kalorien']} kcal")
+                st.success("Screenshot erfolgreich ausgelesen ✅")
+                st.rerun()
 
-    with st.expander("OCR-Rohtext anzeigen"):
-        st.code(data["raw_text"])
+            except Exception as error:
+                st.error(f"Fehler beim Auslesen: {error}")
 
     st.success("Screenshot erfolgreich geladen ✅")
 
@@ -57,32 +62,71 @@ if st.session_state.show_form:
         st.write("### Neuen Lauf eintragen")
 
         lauf_datum = st.date_input("Datum", value=date.today())
-        strecke_km = st.number_input("Strecke in km", min_value=0.0, step=0.1)
-        dauer_min = st.number_input("Dauer in Minuten", min_value=0.0, step=1.0)
-        pace = st.text_input("Pace", placeholder="z.B. 7:02")
-        durchschnittspuls = st.number_input("Durchschnittlicher Puls", min_value=0, step=1)
-        hoehenmeter = st.number_input("Höhenmeter", min_value=0, step=1)
-        kalorien = st.number_input("Kalorien", min_value=0, step=1)
-        notiz = st.text_area("Notiz", placeholder="z.B. gestern Tennis, 2 Bier, schlecht geschlafen...")
 
-if st.button("Lauf speichern"):
-    if ":" not in pace:
-        st.error("Bitte Pace im Format 7:02 eingeben.")
-    else:
-        save_run(
-            lauf_datum.strftime("%d.%m.%Y"),
-            strecke_km,
-            dauer_min,
-            pace,
-            durchschnittspuls,
-            hoehenmeter,
-            kalorien,
-            notiz
+        strecke_km = st.number_input(
+            "Strecke in km",
+            min_value=0.0,
+            step=0.1,
+            value=float(st.session_state.get("ocr_kilometer", 0.0))
         )
 
-        st.success("Lauf wurde gespeichert ✅")
-        st.session_state.show_form = False
-        st.rerun()
+        dauer_min = st.number_input(
+            "Dauer in Minuten",
+            min_value=0.0,
+            step=1.0,
+            value=float(st.session_state.get("ocr_dauer", 0.0))
+        )
+
+        pace = st.text_input(
+            "Pace",
+            value=st.session_state.get("ocr_pace", ""),
+            placeholder="z.B. 7:02"
+        )
+
+        durchschnittspuls = st.number_input(
+            "Durchschnittlicher Puls",
+            min_value=0,
+            step=1,
+            value=int(st.session_state.get("ocr_puls", 0))
+        )
+
+        hoehenmeter = st.number_input(
+            "Höhenmeter",
+            min_value=0,
+            step=1,
+            value=int(st.session_state.get("ocr_hoehenmeter", 0))
+        )
+
+        kalorien = st.number_input(
+            "Kalorien",
+            min_value=0,
+            step=1,
+            value=int(st.session_state.get("ocr_kalorien", 0))
+        )
+
+        notiz = st.text_area(
+            "Notiz",
+            placeholder="z.B. gestern Tennis, 2 Bier, schlecht geschlafen..."
+        )
+
+        if st.button("Lauf speichern"):
+            if ":" not in pace:
+                st.error("Bitte Pace im Format 7:02 eingeben.")
+            else:
+                save_run(
+                    lauf_datum.strftime("%d.%m.%Y"),
+                    strecke_km,
+                    dauer_min,
+                    pace,
+                    durchschnittspuls,
+                    hoehenmeter,
+                    kalorien,
+                    notiz
+                )
+
+                st.success("Lauf wurde gespeichert ✅")
+                st.session_state.show_form = False
+                st.rerun()
 
 
 st.divider()
