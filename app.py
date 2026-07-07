@@ -45,7 +45,7 @@ if uploaded_file is not None:
     st.write(f"🔥 Kalorien: {data['kalorien']} kcal")
 
     with st.expander("OCR-Rohtext anzeigen"):
-    st.code(data["raw_text"])
+        st.code(data["raw_text"])
 
     st.success("Screenshot erfolgreich geladen ✅")
 
