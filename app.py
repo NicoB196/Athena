@@ -14,9 +14,9 @@ st.set_page_config(
 create_database()
 
 st.title("🏃 Athena")
-st.write("Willkommen Nico 👋")
+st.write("Willkommen 👋")
 st.write("## Dein persönlicher Laufcoach")
-st.info("Version 0.4.0: Läufe manuell erfassen")
+st.info("Version 0.9.0: Läufe manuell erfassen")
 
 st.divider()
 
