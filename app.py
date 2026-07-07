@@ -1,6 +1,8 @@
 from datetime import date
 import streamlit as st
 
+from ocr import extract_run_data
+
 from database import create_database, save_run, get_last_three_runs
 from analysis import average_runs, compare_current_run, generate_summary
 
@@ -20,6 +22,20 @@ st.divider()
 
 if "show_form" not in st.session_state:
     st.session_state.show_form = False
+
+st.subheader("📸 Lauf per Screenshot")
+
+uploaded_file = st.file_uploader(
+    "Fitbit-Screenshot auswählen",
+    type=["png", "jpg", "jpeg"]
+)
+
+if uploaded_file is not None:
+    st.image(uploaded_file, use_container_width=True)
+
+    data = extract_run_data(uploaded_file)
+
+    st.success("Screenshot erfolgreich geladen ✅")
 
 if st.button("➕ Neuen Lauf hinzufügen"):
     st.session_state.show_form = not st.session_state.show_form
