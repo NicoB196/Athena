@@ -1,9 +1,14 @@
+import easyocr
+
+reader = easyocr.Reader(["en"])
+
+
 def extract_run_data(image):
-    return {
-        "kilometer": None,
-        "dauer": None,
-        "pace": None,
-        "puls": None,
-        "hoehenmeter": None,
-        "kalorien": None,
-    }
+    result = reader.readtext(image)
+
+    text = ""
+
+    for item in result:
+        text += item[1] + "\n"
+
+    return text
