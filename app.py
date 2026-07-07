@@ -35,9 +35,17 @@ if uploaded_file is not None:
 
     data = extract_run_data(uploaded_file)
 
-    st.subheader("Erkannter Text")
+    st.success("Screenshot erfolgreich gelesen ✅")
 
-    st.code(data)
+    st.write("### Erkannte Werte")
+    st.write(f"📏 Strecke: {data['kilometer']} km")
+    st.write(f"⏱ Dauer: {data['dauer']} Minuten")
+    st.write(f"⚡ Pace: {data['pace']} min/km")
+    st.write(f"❤️ Puls: {data['puls']} bpm")
+    st.write(f"🔥 Kalorien: {data['kalorien']} kcal")
+
+    with st.expander("OCR-Rohtext anzeigen"):
+    st.code(data["raw_text"])
 
     st.success("Screenshot erfolgreich geladen ✅")
 
